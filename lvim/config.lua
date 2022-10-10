@@ -47,7 +47,10 @@ lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 -- }
 
 -- Use which-key to add extra bindings with the leader-key prefix
--- lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
+lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" } -- 打开最近工程
+lvim.builtin.which_key.mappings["ss"] = {
+    ":HopChar2<cr>", "EasyMotion"
+}
 -- lvim.builtin.which_key.mappings["t"] = {
 --   name = "+Trouble",
 --   r = { "<cmd>Trouble lsp_references<cr>", "References" },
@@ -69,30 +72,34 @@ lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
 
 -- if you don't want all the parsers change this to a table of the ones you want
 lvim.builtin.treesitter.ensure_installed = {
-  "bash",
-  "c",
-  "javascript",
-  "json",
-  "lua",
-  "python",
-  "typescript",
-  "tsx",
-  "css",
-  "rust",
-  "java",
-  "yaml",
+    "bash",
+    "c",
+    "javascript",
+    "json",
+    "lua",
+    "python",
+    "typescript",
+    "tsx",
+    "css",
+    "rust",
+    "java",
+    "yaml",
+    "go",
 }
 
 lvim.builtin.treesitter.ignore_install = { "haskell" }
 lvim.builtin.treesitter.highlight.enabled = true
+-- 改内置插件的参数
+lvim.builtin.gitsigns.opts.current_line_blame = true
 
 -- generic LSP settings
 
 -- -- make sure server will always be installed even if the server is in skipped_servers list
--- lvim.lsp.installer.setup.ensure_installed = {
---     "sumeko_lua",
---     "jsonls",
--- }
+lvim.lsp.installer.setup.ensure_installed = {
+    "sumeko_lua",
+    "jsonls",
+    "gopls",
+}
 -- -- change UI setting of `LspInstallInfo`
 -- -- see <https://github.com/williamboman/nvim-lsp-installer#default-configuration>
 -- lvim.lsp.installer.setup.ui.check_outdated_servers_on_open = false
@@ -144,22 +151,27 @@ lvim.builtin.treesitter.highlight.enabled = true
 -- }
 
 -- -- set additional linters
--- local linters = require "lvim.lsp.null-ls.linters"
--- linters.setup {
---   { command = "flake8", filetypes = { "python" } },
---   {
---     -- each linter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
---     command = "shellcheck",
---     ---@usage arguments to pass to the formatter
---     -- these cannot contain whitespaces, options such as `--line-width 	80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
---     extra_args = { "--severity", "warning" },
---   },
---   {
---     command = "codespell",
---     ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
---     filetypes = { "javascript", "python" },
---   },
--- }
+--  静态检查工具
+local linters = require "lvim.lsp.null-ls.linters"
+linters.setup {
+    {
+        command = "golangci-lint",
+        filetype = { "go" }
+    },
+    -- { command = "flake8", filetypes = { "python" } },
+    -- {
+    --   -- each linter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
+    --   command = "shellcheck",
+    --   ---@usage arguments to pass to the formatter
+    --   -- these cannot contain whitespaces, options such as `--line-width 	80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
+    --   extra_args = { "--severity", "warning" },
+    -- },
+    -- {
+    --   command = "codespell",
+    --   ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
+    --   filetypes = { "javascript", "python" },
+    -- },
+}
 
 -- Additional Plugins
 -- lvim.plugins = {
@@ -171,15 +183,15 @@ lvim.builtin.treesitter.highlight.enabled = true
 -- }
 
 lvim.plugins = {
-  -- {
-  --   "phaazon/hop.nvim",
-  --   event = "BufRead",
-  --   config = function()
-  --     require("hop").setup()
-  --     vim.api.nvim_set_keymap("g", "z", ":HopChar2<cr>", { silent = true })
-  --     vim.api.nvim_set_keymap("n", "S", ":HopWord<cr>", { silent = true })
-  --   end,
-  -- },
+    {
+        "phaazon/hop.nvim",
+        event = "BufRead",
+        config = function()
+            require("hop").setup()
+            -- vim.api.nvim_set_keymap("g", "z", ":HopChar2<cr>", { silent = true })
+            -- vim.api.nvim_set_keymap("n", "S", ":HopWord<cr>", { silent = true })
+        end,
+    },
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
