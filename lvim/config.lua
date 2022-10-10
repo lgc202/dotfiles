@@ -21,6 +21,16 @@ vim.opt.tabstop = 4 -- insert 4 spaces for a tab
 lvim.leader = "space"
 -- add your own keymapping
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
+
+-- 类似于easymotion
+-- 增强f键的功能
+lvim.keys.normal_mode["f"] = "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>"
+lvim.keys.normal_mode["F"] = "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<cr>"
+-- 快速移动快捷键
+lvim.keys.normal_mode["ss"] = ":HopChar1<cr>"
+lvim.keys.normal_mode["sw"] = ":HopWord<cr>"
+lvim.keys.normal_mode["sj"] = ":HopLine<cr>"
+lvim.keys.normal_mode["sk"] = ":HopLine<cr>"
 -- lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
 -- lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
 -- unmap a default keymapping
@@ -48,9 +58,6 @@ lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 
 -- Use which-key to add extra bindings with the leader-key prefix
 lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" } -- 打开最近工程
-lvim.builtin.which_key.mappings["ss"] = {
-    ":HopChar2<cr>", "EasyMotion"
-}
 -- lvim.builtin.which_key.mappings["t"] = {
 --   name = "+Trouble",
 --   r = { "<cmd>Trouble lsp_references<cr>", "References" },
