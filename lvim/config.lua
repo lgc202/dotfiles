@@ -71,6 +71,9 @@ lvim.builtin.which_key.mappings["r"] = {
     f = { "<cmd>lua require('spectre').open_file_search()<CR>", "Replace File" }, -- 只替换当前文件
     w = { "<cmd>lua require('spectre').open_visual({select_word=true})<CR>", "Search" } -- 全项目中搜索当前单词
 }
+-- 代码大纲插件相关快捷键
+lvim.builtin.which_key.mappings["o"] = { ":SymbolsOutline<cr>", "Outline" }
+
 -- lvim.builtin.which_key.mappings["t"] = {
 --   name = "+Trouble",
 --   r = { "<cmd>Trouble lsp_references<cr>", "References" },
@@ -239,6 +242,14 @@ lvim.plugins = {
         config = function()
             require("spectre").setup()
         end,
+    },
+    {
+        -- 代码大纲
+        "simrat39/symbols-outline.nvim",
+        event = "BufRead",
+        config = function()
+            require("symbols-outline").setup()
+        end
     },
     -- {
     --     -- TODO: 插件, TODO 后面要有冒号
