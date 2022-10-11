@@ -58,6 +58,19 @@ lvim.keys.normal_mode["sk"] = ":HopLine<cr>"
 
 -- Use which-key to add extra bindings with the leader-key prefix
 lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" } -- 打开最近工程
+-- 会话保存插件相关快捷键
+lvim.builtin.which_key.mappings["S"] = {
+    name = "+Session",
+    l = { "<cmd>SessionManager load_session<cr>", "LoadSession" },
+    d = { "<cmd>SessionManager delete_session<cr>", "DeleteSession" },
+}
+-- 查找替换插件相关快捷键
+lvim.builtin.which_key.mappings["r"] = {
+    name = "+Replace",
+    p = { "<cmd>lua require('spectre').open()<CR>", "Replace All" }, -- 全项目替换
+    f = { "<cmd>lua require('spectre').open_file_search()<CR>", "Replace File" }, -- 只替换当前文件
+    w = { "<cmd>lua require('spectre').open_visual({select_word=true})<CR>", "Search" } -- 全项目中搜索当前单词
+}
 -- lvim.builtin.which_key.mappings["t"] = {
 --   name = "+Trouble",
 --   r = { "<cmd>Trouble lsp_references<cr>", "References" },
@@ -98,9 +111,13 @@ lvim.builtin.treesitter.ignore_install = { "haskell" }
 lvim.builtin.treesitter.highlight.enabled = true
 -- 改内置插件的参数
 lvim.builtin.gitsigns.opts.current_line_blame = true
+-- 加载 telescope 的扩展
+lvim.builtin.telescope.on_config_done = function(telescope)
+    pcall(telescope.load_extension, "ui-select")
+    -- any other extensions loading
+end
 
 -- generic LSP settings
-
 -- -- make sure server will always be installed even if the server is in skipped_servers list
 lvim.lsp.installer.setup.ensure_installed = {
     "sumeko_lua",
@@ -162,7 +179,8 @@ lvim.lsp.installer.setup.ensure_installed = {
 local linters = require "lvim.lsp.null-ls.linters"
 linters.setup {
     {
-        command = "golangci-lint",
+        -- 需要手动在命令行安装 go install honnef.co/go/tools/cmd/staticcheck@latest
+        command = "staticcheck",
         filetype = { "go" }
     },
     -- { command = "flake8", filetypes = { "python" } },
@@ -181,14 +199,6 @@ linters.setup {
 }
 
 -- Additional Plugins
--- lvim.plugins = {
---     {"folke/tokyonight.nvim"},
---     {
---       "folke/trouble.nvim",
---       cmd = "TroubleToggle",
---     },
--- }
-
 lvim.plugins = {
     {
         "phaazon/hop.nvim",
@@ -199,6 +209,50 @@ lvim.plugins = {
             -- vim.api.nvim_set_keymap("n", "S", ":HopWord<cr>", { silent = true })
         end,
     },
+    {
+        -- 会话保存，类似于vscode的workplace
+        "Shatur/neovim-session-manager",
+        event = "BufRead",
+        config = function()
+            require("session_manager").setup {
+                sessions_dir = vim.fn.expand(vim.fn.stdpath "config" .. "/session/"), -- The directory where the session files will be saved.
+                path_replacer = '__', -- The character to which the path separator will be replaced for session files.
+                colon_replacer = '++', -- The character to which the colon symbol will be replaced for session files.
+                autoload_mode = require('session_manager.config').AutoloadMode.Disabled, -- Define what to do when Neovim is started without arguments. Possible values: Disabled, CurrentDir, LastSession
+                autosave_last_session = true, -- Automatically save last session on exit and on session switch.
+                autosave_ignore_not_normal = true, -- Plugin will not save a session when no buffers are opened, or all of them aren't writable or listed.
+                autosave_ignore_filetypes = { -- All buffers of these file types will be closed before the session is saved.
+                    'gitcommit',
+                },
+                autosave_only_in_session = false, -- Always autosaves session. If true, only autosaves after a session is active.
+                max_path_length = 80, -- Shorten the display path if length exceeds this threshold. Use 0 if don't want to shorten the path at all.
+            }
+        end,
+    },
+    {
+        'nvim-telescope/telescope-ui-select.nvim',
+    },
+    {
+        -- 查找替换插件
+        "windwp/nvim-spectre",
+        event = "BufRead",
+        config = function()
+            require("spectre").setup()
+        end,
+    },
+    -- {
+    --     -- TODO: 插件, TODO 后面要有冒号
+    --     "folke/todo-comments.nvim",
+    --     event = "BufRead",
+    --     config = function()
+    --         require("todo-comments").setup()
+    --     end,
+    -- },
+    -- {"folke/tokyonight.nvim"},
+    -- {
+    --  "folke/trouble.nvim",
+    --  cmd = "TroubleToggle",
+    -- },
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
@@ -214,3 +268,11 @@ lvim.plugins = {
 --     require("nvim-treesitter.highlight").attach(0, "bash")
 --   end,
 -- })
+
+-- 加载session时自动打开目录树
+vim.api.nvim_create_autocmd({ 'User' }, {
+    pattern = "SessionLoadPost",
+    callback = function()
+        require('nvim-tree').toggle(false, true)
+    end,
+})
