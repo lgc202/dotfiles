@@ -251,6 +251,34 @@ lvim.plugins = {
             require("symbols-outline").setup()
         end
     },
+    {
+        -- 在quickfix中preview
+        "kevinhwang91/nvim-bqf",
+        event = { "BufRead", "BufNew" },
+        config = function()
+            require("bqf").setup({
+                auto_enable = true,
+                auto_resize_height = true, -- highly recommended enable
+                preview = {
+                    win_height = "12",
+                    win_vheight = "12",
+                    delay_syntax = 80,
+                    border_chars = { "┃", "┃", "━", "━", "┏", "┓", "┗", "┛", "█" },
+                },
+                func_map = {
+                    vsplit = "",
+                    ptogglemode = "z,",
+                    stoggleup = "",
+                },
+                filter = {
+                    fzf = {
+                        action_for = { ["ctrl-s"] = "split" },
+                        extra_opts = { "--bind", "ctrl-o:toggle-all", "--prompt", "> " },
+                    },
+                },
+            })
+        end,
+    },
     -- {
     --     -- TODO: 插件, TODO 后面要有冒号
     --     "folke/todo-comments.nvim",
