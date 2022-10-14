@@ -12,6 +12,7 @@ services:
       - TZ=${TZ}
     privileged: true
     stdin_open: true                     # 打开标准输入，可以接受外部输入
+    hostname: dev
     tty: true
     networks:
       - backend

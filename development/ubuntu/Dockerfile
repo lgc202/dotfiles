@@ -4,9 +4,7 @@ LABEL maintainer="development@live.cn"
 
 # 换源
 RUN  sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list
-RUN  apt-get clean
 RUN  apt-get update
-
 
 # Create a no-passowrd sudo user
 RUN apt-get update \
@@ -15,16 +13,18 @@ RUN apt-get update \
     && echo "ubuntu ALL=(ALL) NOPASSWD : ALL" | tee /etc/sudoers.d/nopasswd4sudo
 
 # Adjust Timezone
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get install -y tzdata \
-    && ln -fs /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+# ENV DEBIAN_FRONTEND=noninteractive
+# RUN apt-get install -y tzdata \
+#     && ln -fs /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
 
 USER ubuntu
 WORKDIR /home/ubuntu
 
-# Install zsh
-RUN sudo apt-get install -y git zsh curl \
-    && sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
-    && sudo usermod -s /bin/zsh ubuntu
+COPY install.sh . 
+RUN sudo chmod +x install.sh
+RUN ./install.sh
+
+SHELL ["/bin/zsh","-ic"] 
+RUN source ~/.zshrc
 
 ENTRYPOINT ["/bin/zsh"]
