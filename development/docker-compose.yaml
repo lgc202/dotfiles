@@ -1,0 +1,18 @@
+version: '3.5'
+# 网络配置
+networks:
+  backend:
+    driver: ${NETWORKS_DRIVER}
+
+services:
+  ubuntu:
+    build:
+      context: ./ubuntu
+    environment:
+      - TZ=${TZ}
+    privileged: true
+    stdin_open: true                     # 打开标准输入，可以接受外部输入
+    tty: true
+    networks:
+      - backend
+    restart: always
