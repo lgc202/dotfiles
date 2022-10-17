@@ -204,6 +204,7 @@ linters.setup {
 -- Additional Plugins
 lvim.plugins = {
     {
+        -- 类似easyemotion，功能更强大
         "phaazon/hop.nvim",
         event = "BufRead",
         config = function()
@@ -233,6 +234,7 @@ lvim.plugins = {
         end,
     },
     {
+        -- telescope 的扩展，提供更好看的UI
         'nvim-telescope/telescope-ui-select.nvim',
     },
     {
