@@ -3,10 +3,11 @@
 set -e
 
 # 安装一些必要工具
-sudo apt-get install -y git zsh curl net-tools iputils-ping vim python
+sudo apt-get install -y net-tools iputils-ping vim python
 
 # 安装oh-myzsh
-sudo sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
+sudo apt-get install -y git zsh curl \
+    && sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
     && sudo usermod -s /bin/zsh ubuntu
 
 # 更换主题

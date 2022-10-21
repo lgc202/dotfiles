@@ -3,8 +3,13 @@ FROM ubuntu:20.04
 LABEL maintainer="development@live.cn"
 
 # 换源
+# RUN  sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list
+# RUN  apt-get update
 RUN  sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list
+RUN  sed -i s@/security.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list
+RUN  apt-get clean
 RUN  apt-get update
+
 
 # Create a no-passowrd sudo user
 RUN apt-get update \
